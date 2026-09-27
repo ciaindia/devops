@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevOps Local Hosting Project - PRD</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f4f6f8;
+        color: #222;
+        line-height: 1.6;
+    }
+
+    .container {
+        max-width: 1100px;
+        margin: 40px auto;
+        background: #fff;
+        padding: 45px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+
+    h1 {
+        margin-top: 0;
+        color: #1f2937;
+        font-size: 32px;
+    }
+
+    h2 {
+        margin-top: 40px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #e5e7eb;
+        color: #2563eb;
+    }
+
+    h3 {
+        color: #374151;
+        margin-top: 25px;
+    }
+
+    .subtitle {
+        color: #6b7280;
+        font-size: 18px;
+        margin-bottom: 30px;
+    }
+
+    .objective {
+        background: #eff6ff;
+        border-left: 5px solid #2563eb;
+        padding: 18px 20px;
+        margin: 20px 0;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+    }
+
+    th,
+    td {
+        border: 1px solid #d1d5db;
+        padding: 12px;
+        text-align: left;
+    }
+
+    th {
+        background: #f3f4f6;
+    }
+
+    code {
+        background: #f3f4f6;
+        padding: 3px 6px;
+        border-radius: 4px;
+        font-family: monospace;
+    }
+
+    pre {
+        background: #111827;
+        color: #f9fafb;
+        padding: 20px;
+        border-radius: 8px;
+        overflow-x: auto;
+        line-height: 1.5;
+    }
+
+    .phase {
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 18px;
+        margin: 12px 0;
+    }
+
+    .phase strong {
+        color: #2563eb;
+    }
+
+    .success {
+        background: #ecfdf5;
+        border-left: 5px solid #10b981;
+        padding: 18px 20px;
+        margin-top: 20px;
+    }
+
+    footer {
+        margin-top: 50px;
+        padding-top: 20px;
+        border-top: 1px solid #e5e7eb;
+        color: #6b7280;
+        font-size: 14px;
+    }
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Product Requirements Document</h1>
+
+<div class="subtitle">
+    DevOps Local CI/CD, Monitoring & Logging Platform
+</div>
+
+<div class="objective">
+    <strong>Objective:</strong>
+    Build and host a simple HTML website locally using Docker Desktop,
+    with automated GitHub CI/CD, monitoring using Prometheus and Grafana,
+    and centralized logging using Loki and Grafana Alloy.
+</div>
+
+<h2>1. Project Overview</h2>
+
+<p>
+    The project demonstrates a complete local DevOps workflow starting from
+    source-code development and GitHub version control through automated
+    CI/CD deployment, container monitoring, logging, and alerting.
+</p>
+
+<h2>2. Technology Stack</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Category</th>
+            <th>Technology</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Frontend</td>
+            <td>HTML, CSS</td>
+        </tr>
+        <tr>
+            <td>Web Server</td>
+            <td>Nginx</td>
+        </tr>
+        <tr>
+            <td>Containerization</td>
+            <td>Docker</td>
+        </tr>
+        <tr>
+            <td>Container Management</td>
+            <td>Docker Compose</td>
+        </tr>
+        <tr>
+            <td>Source Control</td>
+            <td>Git + GitHub</td>
+        </tr>
+        <tr>
+            <td>CI/CD</td>
+            <td>GitHub Actions</td>
+        </tr>
+        <tr>
+            <td>CI/CD Runner</td>
+            <td>GitHub Self-Hosted Runner</td>
+        </tr>
+        <tr>
+            <td>Metrics</td>
+            <td>Prometheus</td>
+        </tr>
+        <tr>
+            <td>Visualization</td>
+            <td>Grafana</td>
+        </tr>
+        <tr>
+            <td>Logging</td>
+            <td>Loki</td>
+        </tr>
+        <tr>
+            <td>Log Collection</td>
+            <td>Grafana Alloy</td>
+        </tr>
+        <tr>
+            <td>Local Environment</td>
+            <td>Docker Desktop</td>
+        </tr>
+        <tr>
+            <td>Future Cloud</td>
+            <td>Google Cloud Platform (GCP)</td>
+        </tr>
+        <tr>
+            <td>Future Infrastructure as Code</td>
+            <td>Terraform</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>3. High-Level Architecture</h2>
+
+<pre>
+                         GitHub
+                           |
+                       git push
+                           |
+                           v
+                  GitHub Actions
+                           |
+                           v
+              Self-Hosted GitHub Runner
+                           |
+                           v
+                    Docker Compose
+                           |
+          +----------------+----------------+
+          |                |                |
+          v                v                v
+       Nginx           Prometheus        Grafana
+          |                |                |
+          v                |                |
+     HTML Website          |                |
+                           +----------------+
+                                   
+          Application / Container Logs
+                           |
+                           v
+                         Alloy
+                           |
+                           v
+                          Loki
+                           |
+                           v
+                        Grafana
+</pre>
+
+<h2>4. Functional Requirements</h2>
+
+<h3>FR-01: Website</h3>
+
+<p>
+    The system shall provide a simple responsive HTML website.
+</p>
+
+<ul>
+    <li>Home section</li>
+    <li>About section</li>
+    <li>Services or Projects section</li>
+    <li>Contact section</li>
+    <li>Responsive CSS styling</li>
+</ul>
+
+<h3>FR-02: Dockerization</h3>
+
+<p>
+    The website shall run inside a Docker container using Nginx.
+</p>
+
+<ul>
+    <li>Create a Dockerfile</li>
+    <li>Use an Nginx base image</li>
+    <li>Copy website files into the Nginx web directory</li>
+    <li>Expose port 80</li>
+    <li>Run the service using Docker Compose</li>
+</ul>
+
+<pre>
+Browser
+   |
+   v
+localhost:8080
+   |
+   v
+Nginx Container :80
+   |
+   v
+HTML Website
+</pre>
+
+<h3>FR-03: Docker Compose</h3>
+
+<p>
+    Docker Compose shall manage the complete local environment.
+</p>
+
+<p>Expected services:</p>
+
+<ul>
+    <li>Nginx</li>
+    <li>Prometheus</li>
+    <li>Grafana</li>
+    <li>Loki</li>
+    <li>Grafana Alloy</li>
+</ul>
+
+<h2>5. GitHub Repository</h2>
+
+<pre>
+devops-project/
+|
++-- index.html
++-- css/
+|   +-- style.css
+|
++-- Dockerfile
++-- docker-compose.yml
+|
++-- prometheus/
+|   +-- prometheus.yml
+|
++-- grafana/
+|   +-- provisioning/
+|
++-- loki/
+|   +-- loki-config.yml
+|
++-- alloy/
+|   +-- config.alloy
+|
++-- .github/
+|   +-- workflows/
+|       +-- cicd.yml
+|
++-- README.md
++-- PROJECT_GUIDE.md
+</pre>
+
+<h2>6. CI/CD Requirements</h2>
+
+<p>
+    GitHub Actions shall automatically execute whenever code is pushed
+    to the <code>main</code> branch.
+</p>
+
+<pre>
+Git Push
+   |
+   v
+Checkout Code
+   |
+   v
+Build Docker Image
+   |
+   v
+Run Container Test
+   |
+   v
+Health Check
+   |
+   v
+Deploy using Docker Compose
+   |
+   v
+Verify Website
+</pre>
+
+<h2>7. Self-Hosted GitHub Runner</h2>
+
+<p>
+    A GitHub Actions self-hosted runner shall be installed on the local
+    development machine.
+</p>
+
+<pre>
+GitHub
+   |
+   v
+GitHub Actions
+   |
+   v
+Local Self-Hosted Runner
+   |
+   v
+Docker Desktop
+   |
+   v
+Application
+</pre>
+
+<p>
+    The runner must have access to:
+</p>
+
+<ul>
+    <li>Git</li>
+    <li>Docker</li>
+    <li>Docker Compose</li>
+    <li>Project files</li>
+</ul>
+
+<h2>8. Monitoring with Prometheus</h2>
+
+<p>
+    Prometheus shall collect infrastructure and application metrics.
+</p>
+
+<ul>
+    <li>Container availability</li>
+    <li>CPU usage</li>
+    <li>Memory usage</li>
+    <li>Container metrics</li>
+    <li>Nginx metrics where available</li>
+</ul>
+
+<p>
+    Prometheus shall be accessible locally at:
+    <code>http://localhost:9090</code>
+</p>
+
+<h2>9. Grafana</h2>
+
+<p>
+    Grafana shall provide dashboards for metrics, logs, and alerts.
+</p>
+
+<ul>
+    <li>CPU usage</li>
+    <li>Memory usage</li>
+    <li>Container status</li>
+    <li>Application metrics</li>
+    <li>Application logs</li>
+</ul>
+
+<p>
+    Grafana shall be accessible locally at:
+    <code>http://localhost:3000</code>
+</p>
+
+<h2>10. Logging with Loki and Alloy</h2>
+
+<pre>
+Docker Containers
+       |
+       v
+     Alloy
+       |
+       v
+      Loki
+       |
+       v
+    Grafana
+</pre>
+
+<p>
+    Grafana Alloy shall collect container logs and send them to Loki.
+    Grafana shall provide an interface to search and view the logs.
+</p>
+
+<h2>11. Alerting</h2>
+
+<p>
+    Basic Grafana alerts shall be configured for important system events.
+</p>
+
+<ul>
+    <li>Website or container is down</li>
+    <li>High CPU usage</li>
+    <li>High memory usage</li>
+    <li>Container restart</li>
+    <li>Nginx errors</li>
+</ul>
+
+<h2>12. Local Service URLs</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Service</th>
+            <th>URL</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>HTML Website</td>
+            <td>http://localhost:8080</td>
+        </tr>
+        <tr>
+            <td>Prometheus</td>
+            <td>http://localhost:9090</td>
+        </tr>
+        <tr>
+            <td>Grafana</td>
+            <td>http://localhost:3000</td>
+        </tr>
+        <tr>
+            <td>Loki</td>
+            <td>Internal Docker service</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>13. Non-Functional Requirements</h2>
+
+<ul>
+    <li>The website should load quickly on the local machine.</li>
+    <li>Services should restart automatically when configured.</li>
+    <li>Configuration must be maintained in GitHub.</li>
+    <li>The entire environment must be reproducible.</li>
+    <li>A developer should be able to start the environment using:</li>
+</ul>
+
+<pre>
+docker compose up -d
+</pre>
+
+<h2>14. Project Phases</h2>
+
+<div class="phase">
+    <strong>Phase 1:</strong> HTML + CSS Website
+</div>
+
+<div class="phase">
+    <strong>Phase 2:</strong> Docker + Nginx
+</div>
+
+<div class="phase">
+    <strong>Phase 3:</strong> Docker Compose
+</div>
+
+<div class="phase">
+    <strong>Phase 4:</strong> Git + GitHub
+</div>
+
+<div class="phase">
+    <strong>Phase 5:</strong> GitHub Actions
+</div>
+
+<div class="phase">
+    <strong>Phase 6:</strong> Self-Hosted GitHub Runner
+</div>
+
+<div class="phase">
+    <strong>Phase 7:</strong> Automated Local Deployment
+</div>
+
+<div class="phase">
+    <strong>Phase 8:</strong> Prometheus Monitoring
+</div>
+
+<div class="phase">
+    <strong>Phase 9:</strong> Grafana Dashboards
+</div>
+
+<div class="phase">
+    <strong>Phase 10:</strong> Loki + Grafana Alloy Logging
+</div>
+
+<div class="phase">
+    <strong>Phase 11:</strong> Grafana Alerts
+</div>
+
+<div class="phase">
+    <strong>Phase 12:</strong> GCP + Terraform
+</div>
+
+<h2>15. Future Cloud Deployment</h2>
+
+<p>
+    After the local environment is completed, the same application can
+    be deployed to Google Cloud Platform using Terraform.
+</p>
+
+<pre>
+GitHub
+   |
+   v
+GitHub Actions
+   |
+   v
+Terraform
+   |
+   v
+GCP
+   |
+   v
+Compute Engine
+   |
+   v
+Docker
+   |
+   v
+Nginx
+   |
+   v
+Public Website
+</pre>
+
+<h2>16. Success Criteria</h2>
+
+<div class="success">
+    <ol>
+        <li>Developer pushes code to GitHub.</li>
+        <li>GitHub Actions automatically starts.</li>
+        <li>Local self-hosted runner executes the workflow.</li>
+        <li>Docker image is built successfully.</li>
+        <li>Website is deployed automatically.</li>
+        <li>Website is available at localhost:8080.</li>
+        <li>Prometheus collects metrics.</li>
+        <li>Grafana displays dashboards.</li>
+        <li>Alloy collects container logs.</li>
+        <li>Loki stores logs.</li>
+        <li>Grafana displays searchable logs.</li>
+        <li>Grafana alerts work for basic failures.</li>
+        <li>The environment can be recreated using Docker Compose.</li>
+    </ol>
+</div>
+
+<h2>17. Learning Outcome</h2>
+
+<p>
+    At the end of the project, students should understand the complete
+    DevOps lifecycle:
+</p>
+
+<pre>
+HTML
+  ↓
+Git
+  ↓
+GitHub
+  ↓
+Docker
+  ↓
+Docker Compose
+  ↓
+GitHub Actions
+  ↓
+Self-Hosted Runner
+  ↓
+CI/CD
+  ↓
+Prometheus
+  ↓
+Grafana
+  ↓
+Loki + Alloy
+  ↓
+Alerting
+  ↓
+Terraform
+  ↓
+GCP
+</pre>
+
+<footer>
+    DevOps Local CI/CD & Monitoring Platform — Product Requirements Document
+</footer>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevOps Master Notes</title>
+  <meta name="description" content="A concise reference and learning guide for students learning DevOps from beginner to intermediate level.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  
+  <button id="menu-toggle" class="menu-toggle">☰ Menu</button>
+  <button id="back-to-top" class="back-to-top">↑</button>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title">DevOps Master Notes</div>
+      <div class="sidebar-subtitle">Linux • Networking • Git • Docker • CI/CD • Monitoring • Cloud</div>
+    </div>
+    
+    <div class="controls">
+      <button id="theme-toggle" class="btn">Toggle Theme</button>
+    </div>
+    
+    <input type="text" id="search-input" class="search-box" placeholder="Search notes...">
+    
+    <ul class="nav-links">
+      <li><a href="#sec-1">1. DevOps Basics</a></li>
+      <li><a href="#sec-2">2. Basic Linux</a></li>
+      <li><a href="#sec-3">3. Basic Networking</a></li>
+      <li><a href="#sec-4">4. IP Address Classes</a></li>
+      <li><a href="#sec-5">5. Private IP Addresses</a></li>
+      <li><a href="#sec-6">6. Localhost</a></li>
+      <li><a href="#sec-7">7. Ports</a></li>
+      <li><a href="#sec-8">8. Hosts File</a></li>
+      <li><a href="#sec-9">9. DNS</a></li>
+      <li><a href="#sec-10">10. Networking Linux Commands</a></li>
+      <li><a href="#sec-11">11. Git</a></li>
+      <li><a href="#sec-12">12. Docker</a></li>
+      <li><a href="#sec-13">13. Dockerfile</a></li>
+      <li><a href="#sec-14">14. Docker Compose</a></li>
+      <li><a href="#sec-15">15. Nginx</a></li>
+      <li><a href="#sec-16">16. GitHub Actions</a></li>
+      <li><a href="#sec-17">17. Self-hosted Runner</a></li>
+      <li><a href="#sec-18">18. Prometheus</a></li>
+      <li><a href="#sec-19">19. Grafana</a></li>
+      <li><a href="#sec-20">20. Loki</a></li>
+      <li><a href="#sec-21">21. Grafana Alloy</a></li>
+      <li><a href="#sec-22">22. Monitoring & Alerting</a></li>
+      <li><a href="#sec-23">23. Terraform</a></li>
+      <li><a href="#sec-24">24. GCP</a></li>
+      <li><a href="#sec-25">25. Ubuntu Server</a></li>
+      <li><a href="#sec-26">26. End-to-End Project</a></li>
+      <li><a href="#sec-27">27. Command Cheatsheet</a></li>
+      <li><a href="#sec-28">28. Ports Cheatsheet</a></li>
+      <li><a href="#sec-29">29. Network Reference</a></li>
+      <li><a href="#sec-30">30. Troubleshooting</a></li>
+    </ul>
+  </aside>
+
+  <main class="main-content">
+    
+    <!-- SECTION 1 -->
+    <section id="sec-1">
+      <h1>1. DevOps Basics</h1>
+      
+      <p><strong>What is it?</strong> DevOps is a set of practices combining software development (Dev) and IT operations (Ops).</p>
+      <p><strong>Why is it used?</strong> To shorten the development lifecycle and provide continuous delivery with high quality.</p>
+      
+      <div class="callout callout-key">
+        <span class="callout-title">Key Terms</span>
+        <ul>
+          <li><strong>CI (Continuous Integration):</strong> Automatically building and testing code on every commit.</li>
+          <li><strong>CD (Continuous Delivery):</strong> Code is always in a deployable state.</li>
+          <li><strong>Continuous Deployment:</strong> Every change passing tests is automatically deployed to production.</li>
+          <li><strong>Infrastructure as Code (IaC):</strong> Managing infrastructure through machine-readable definition files.</li>
+          <li><strong>Monitoring & Logging:</strong> Tracking system health and recording events.</li>
+          <li><strong>Containers & Cloud:</strong> Packaging apps (Docker) and running them on rented servers (AWS, GCP).</li>
+        </ul>
+      </div>
+
+      <div class="diagram">
+Plan &rarr; Code &rarr; Build &rarr; Test &rarr; Release &rarr; Deploy &rarr; Operate &rarr; Monitor
+      </div>
+
+      <div class="callout callout-interview">
+        <span class="callout-title">Interview Tip</span>
+        DevOps is not a tool; it's a culture and methodology focusing on automation and collaboration between Dev and Ops teams.
+      </div>
+    </section>
+
+    <!-- SECTION 2 -->
+    <section id="sec-2">
+      <h1>2. Basic Linux</h1>
+      
+      <p><strong>What is it?</strong> An open-source operating system. The foundation of modern DevOps infrastructure.</p>
+      
+      <h3>Linux Filesystem</h3>
+      <div class="table-responsive">
+        <table>
+          <tr><th>Directory</th><th>Purpose</th></tr>
+          <tr><td><code>/</code></td><td>Root directory. Everything starts here.</td></tr>
+          <tr><td><code>/home</code></td><td>User home directories.</td></tr>
+          <tr><td><code>/etc</code></td><td>System-wide configuration files.</td></tr>
+          <tr><td><code>/var</code></td><td>Variable data (logs, databases).</td></tr>
+          <tr><td><code>/var/log</code></td><td>System and application log files.</td></tr>
+          <tr><td><code>/opt</code></td><td>Optional add-on application software packages.</td></tr>
+          <tr><td><code>/tmp</code></td><td>Temporary files (cleared on reboot).</td></tr>
+          <tr><td><code>/usr</code></td><td>User utilities and applications.</td></tr>
+          <tr><td><code>/root</code></td><td>Home directory for the root superuser.</td></tr>
+        </table>
+      </div>
+
+      <h3>Basic Commands</h3>
+      <div class="table-responsive">
+        <table>
+          <tr><th>Command</th><th>Purpose</th></tr>
+          <tr><td><code>pwd</code>, <code>ls</code>, <code>ls -la</code></td><td>Print working directory; list files; list all with details.</td></tr>
+          <tr><td><code>cd</code>, <code>mkdir</code>, <code>touch</code></td><td>Change directory; make directory; create empty file.</td></tr>
+          <tr><td><code>cp</code>, <code>mv</code>, <code>rm</code>, <code>rm -rf</code></td><td>Copy; move/rename; remove; forcefully remove recursively.</td></tr>
+          <tr><td><code>cat</code>, <code>less</code></td><td>Print entire file content; view file interactively.</td></tr>
+          <tr><td><code>head</code>, <code>tail</code>, <code>tail -f</code></td><td>View top; view bottom; follow appended data in real-time.</td></tr>
+          <tr><td><code>grep</code>, <code>find</code>, <code>locate</code></td><td>Search text; search files by condition; search file database.</td></tr>
+          <tr><td><code>wc</code>, <code>sort</code>, <code>uniq</code></td><td>Word count; sort lines; remove duplicates.</td></tr>
+          <tr><td><code>cut</code>, <code>awk</code>, <code>sed</code></td><td>Extract columns; text processing; stream editor (search/replace).</td></tr>
+          <tr><td><code>history</code>, <code>clear</code></td><td>Show command history; clear terminal screen.</td></tr>
+        </table>
+      </div>
+
+      <h3>File Permissions</h3>
+      <p><strong>r = read (4) | w = write (2) | x = execute (1)</strong></p>
+      <div class="callout callout-command">
+        <span class="callout-title">Commands</span>
+        <code>chmod</code>: Change permissions.<br>
+        <code>chown</code>: Change owner.<br>
+        <code>chgrp</code>: Change group.
+      </div>
+      <pre><code>chmod 755 script.sh  # rwx for owner, r-x for group/others
+chmod 644 index.html # rw- for owner, r-- for group/others
+chown user:user file.txt # Change user and group owner</code></pre>
+
+      <h3>Processes & System Info</h3>
+      <p>Commands: <code>ps</code>, <code>ps aux</code>, <code>top</code>, <code>htop</code>, <code>kill</code>, <code>kill -9</code>, <code>pgrep</code>, <code>pkill</code></p>
+      <p>System Info: <code>uname -a</code>, <code>hostname</code>, <code>hostnamectl</code>, <code>uptime</code>, <code>free -h</code>, <code>df -h</code>, <code>du -sh</code>, <code>lsblk</code></p>
+
+      <h3>Services & Logs (Ubuntu)</h3>
+      <pre><code>systemctl status nginx
+systemctl start nginx
+systemctl enable nginx
+journalctl -u nginx -f
+apt update && apt install nginx</code></pre>
+    </section>
+
+    <!-- SECTION 3 -->
+    <section id="sec-3">
+      <h1>3. Basic Networking</h1>
+      
+      <p><strong>What is it?</strong> How computers communicate with each other.</p>
+      
+      <div class="table-responsive">
+        <table>
+          <tr><th>Term</th><th>Meaning</th></tr>
+          <tr><td><strong>Network</strong></td><td>Two or more connected computers.</td></tr>
+          <tr><td><strong>Host</strong></td><td>Any device connected to a network.</td></tr>
+          <tr><td><strong>Client / Server</strong></td><td>Device requesting data / Device providing data.</td></tr>
+          <tr><td><strong>IP Address</strong></td><td>Unique identifier for a host (IPv4 or IPv6).</td></tr>
+          <tr><td><strong>MAC Address</strong></td><td>Physical hardware address of a network interface.</td></tr>
+          <tr><td><strong>Router / Gateway</strong></td><td>Connects different networks together and routes traffic.</td></tr>
+          <tr><td><strong>Switch</strong></td><td>Connects devices within the same network.</td></tr>
+          <tr><td><strong>DNS</strong></td><td>Domain Name System. Translates names to IP addresses.</td></tr>
+          <tr><td><strong>DHCP</strong></td><td>Dynamically assigns IP addresses to clients.</td></tr>
+          <tr><td><strong>Protocol</strong></td><td>Rules of communication (TCP, UDP, HTTP).</td></tr>
+        </table>
+      </div>
+      
+      <div class="callout callout-key">
+        <span class="callout-title">IPv4 (32 bits)</span>
+        Example: <code>192.168.1.10</code>.<br>
+        Composed of 4 octets (8 bits each), values ranging from 0 to 255.
+      </div>
+    </section>
+
+    <!-- SECTION 4 -->
+    <section id="sec-4">
+      <h1>4. IP Address Classes</h1>
+      
+      <div class="callout callout-interview">
+        <span class="callout-title">Important Note</span>
+        Class A, B, and C are historical classful IPv4 categories. Modern networks primarily use CIDR (Classless Inter-Domain Routing). Beginners encounter these terms often, but they are obsolete.
+      </div>
+
+      <div class="table-responsive">
+        <table>
+          <tr><th>Class</th><th>Range</th><th>Default Mask</th><th>CIDR</th></tr>
+          <tr><td><strong>Class A</strong></td><td>1.0.0.0 &ndash; 126.255.255.255</td><td>255.0.0.0</td><td>/8</td></tr>
+          <tr><td><strong>Class B</strong></td><td>128.0.0.0 &ndash; 191.255.255.255</td><td>255.255.0.0</td><td>/16</td></tr>
+          <tr><td><strong>Class C</strong></td><td>192.0.0.0 &ndash; 223.255.255.255</td><td>255.255.255.0</td><td>/24</td></tr>
+        </table>
+      </div>
+      
+      <p><strong>CIDR Examples:</strong><br>
+        <code>10.0.0.0/8</code> (16 million+ IPs)<br>
+        <code>172.16.0.0/12</code> (1 million+ IPs)<br>
+        <code>192.168.0.0/16</code> (65,536 IPs)<br>
+        <code>192.168.1.0/24</code> (256 IPs, common in home networks)
+      </p>
+    </section>
+
+    <!-- SECTION 5 -->
+    <section id="sec-5">
+      <h1>5. Private IP Addresses</h1>
+      
+      <p><strong>What is it?</strong> IP ranges reserved for internal networks (LAN/VPC) that cannot be routed on the public internet.</p>
+      
+      <div class="callout callout-key">
+        <span class="callout-title">Private IPv4 Ranges</span>
+        <ul>
+          <li><code>10.0.0.0/8</code> (10.0.0.0 - 10.255.255.255)</li>
+          <li><code>172.16.0.0/12</code> (172.16.0.0 - 172.31.255.255)</li>
+          <li><code>192.168.0.0/16</code> (192.168.0.0 - 192.168.255.255)</li>
+        </ul>
+      </div>
+
+      <p><strong>Example:</strong> Your home router might be <code>192.168.1.1</code> and your laptop <code>192.168.1.100</code>.</p>
+      
+      <div class="callout callout-interview">
+        <span class="callout-title">Interview Tip</span>
+        A Private IP is used inside a local network. A Public IP is assigned by an ISP and is visible on the internet. NAT (Network Address Translation) allows private IP devices to access the internet using a single public IP.
+      </div>
+    </section>
+
+    <!-- SECTION 6 -->
+    <section id="sec-6">
+      <h1>6. Localhost</h1>
+      
+      <p><strong>What is it?</strong> A hostname that means "this computer". It resolves to the local loopback address.</p>
+      
+      <div class="diagram">
+localhost &rarr; 127.0.0.1 &rarr; current machine
+      </div>
+
+      <div class="callout callout-example">
+        <span class="callout-title">Example</span>
+        Accessing <code>http://localhost:8080</code> is exactly the same as accessing <code>http://127.0.0.1:8080</code> on your own machine.
+      </div>
+
+      <div class="callout callout-key">
+        <span class="callout-title">127.0.0.1 vs 0.0.0.0</span>
+        <ul>
+          <li><strong>127.0.0.1</strong>: Local loopback address. Only accessible from inside the machine itself.</li>
+          <li><strong>0.0.0.0</strong>: Represents "all IPv4 interfaces" when a server binds to it. Accessible from the outside network.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SECTION 7 -->
+    <section id="sec-7">
+      <h1>7. Ports</h1>
+      
+      <p><strong>What is it?</strong> A logical endpoint. While an IP identifies the machine, a port identifies the specific service running on it.</p>
+      <p><strong>Why is it used?</strong> To allow one machine to run multiple services (web server, database, SSH) simultaneously.</p>
+      
+      <div class="callout callout-key">
+        <span class="callout-title">IP + Port = Socket</span>
+        Example: <code>192.168.1.10:8080</code> (IP is 192.168.1.10, Port is 8080)
+      </div>
+
+      <div class="callout callout-interview">
+        <span class="callout-title">Interview Tip</span>
+        A port is not an application itself. A process/service <em>listens</em> on a port. If a port is "in use", another process is already listening there.
+      </div>
+    </section>
+
+    <!-- SECTION 8 -->
+    <section id="sec-8">
+      <h1>8. Hosts File</h1>
+      
+      <p><strong>What is it?</strong> A local file that maps hostnames to IP addresses manually, bypassing DNS.</p>
+      <p><strong>Locations:</strong></p>
+      <ul>
+        <li>Linux/Mac: <code>/etc/hosts</code></li>
+        <li>Windows: <code>C:\Windows\System32\drivers\etc\hosts</code></li>
+      </ul>
+
+      <div class="callout callout-example">
+        <span class="callout-title">Example</span>
+        <pre><code>127.0.0.1    myapp.local
+192.168.1.20 server.local</code></pre>
+      </div>
+
+      <div class="diagram">
+myapp.local &rarr; hosts file lookup &rarr; 127.0.0.1 &rarr; local machine
+      </div>
+      
+      <p>Test it with: <code>curl http://myapp.local</code></p>
+      
+      <div class="callout callout-interview">
+        <span class="callout-title">Interview Tip</span>
+        The OS checks the <code>hosts</code> file <strong>before</strong> querying the DNS server. It is highly useful for local testing before deploying DNS records.
+      </div>
+    </section>
+
+    <!-- SECTION 9 -->
+    <section id="sec-9">
+      <h1>9. DNS (Domain Name System)</h1>
+      
+      <p><strong>What is it?</strong> The phonebook of the internet. It translates human-readable domain names into IP addresses.</p>
+      
+      <div class="diagram">
+example.com &rarr; DNS Resolver &rarr; DNS Server &rarr; 93.184.216.34 (IP address)
+      </div>
+
+      <h3>Common Record Types:</h3>
+      <ul>
+        <li><strong>A record:</strong> Maps a name to an IPv4 address.</li>
+        <li><strong>AAAA record:</strong> Maps a name to an IPv6 address.</li>
+        <li><strong>CNAME:</strong> Maps a name to another domain name (alias).</li>
+        <li><strong>MX:</strong> Mail exchange record for routing emails.</li>
+        <li><strong>TXT:</strong> Text records, often used for domain verification and security.</li>
+      </ul>
+
+      <div class="callout callout-command">
+        <span class="callout-title">Commands</span>
+        <pre><code>nslookup example.com
+dig example.com
+host example.com</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 10 -->
+    <section id="sec-10">
+      <h1>10. Networking Linux Commands</h1>
+      
+      <p><strong>What is it?</strong> CLI tools to troubleshoot networking.</p>
+
+      <div class="table-responsive">
+        <table>
+          <tr><th>Command</th><th>Purpose</th></tr>
+          <tr><td><code>ip addr</code></td><td>Show IP addresses on network interfaces.</td></tr>
+          <tr><td><code>ip route</code></td><td>Show routing table.</td></tr>
+          <tr><td><code>ip link</code></td><td>Show network interfaces status.</td></tr>
+          <tr><td><code>ping</code></td><td>Test reachability using ICMP.</td></tr>
+          <tr><td><code>curl / wget</code></td><td>Download data or test HTTP endpoints.</td></tr>
+          <tr><td><code>traceroute</code></td><td>Trace path packets take to destination.</td></tr>
+          <tr><td><code>hostname -I</code></td><td>Quickly show machine's IP.</td></tr>
+        </table>
+      </div>
+
+      <div class="callout callout-command">
+        <span class="callout-title">Crucial Command: ss -tulpn</span>
+        Used to see which processes are listening on which ports.
+        <pre><code>ss -tulpn | grep :80</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 11 -->
+    <section id="sec-11">
+      <h1>11. Git</h1>
+      
+      <p><strong>What is it?</strong> A distributed version control system.</p>
+      <p><strong>Why is it used?</strong> To track code changes, collaborate, and maintain history.</p>
+
+      <div class="diagram">
+Code &rarr; git add &rarr; git commit &rarr; git push &rarr; GitHub
+      </div>
+
+      <div class="callout callout-command">
+        <span class="callout-title">Important Commands</span>
+        <code>git init</code> (initialize repo)<br>
+        <code>git clone</code> (copy remote repo)<br>
+        <code>git status</code> (check state)<br>
+        <code>git branch / checkout / switch</code> (manage branches)<br>
+        <code>git pull / push</code> (sync with remote)
+      </div>
+
+      <div class="callout callout-interview">
+        <span class="callout-title">Interview Tip</span>
+        Git is the tool running locally. GitHub/GitLab are web-based hosting services for Git repositories.
+      </div>
+    </section>
+
+    <!-- SECTION 12 -->
+    <section id="sec-12">
+      <h1>12. Docker</h1>
+      
+      <p><strong>What is it?</strong> A platform to develop, ship, and run applications inside isolated environments called containers.</p>
+      <p><strong>Why is it used?</strong> "It works on my machine" &rarr; Docker ensures it works everywhere identically.</p>
+
+      <div class="diagram">
+Browser &rarr; localhost:8080 &rarr; Docker Host Port 8080 &rarr; Container Port 80 &rarr; Nginx
+      </div>
+
+      <div class="callout callout-command">
+        <span class="callout-title">Important Commands</span>
+        <pre><code>docker build -t myapp .
+docker run -d -p 8080:80 nginx
+docker ps
+docker stop &lt;container_id&gt;
+docker logs &lt;container_id&gt;
+docker exec -it &lt;container_id&gt; sh</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 13 -->
+    <section id="sec-13">
+      <h1>13. Dockerfile</h1>
+      
+      <p><strong>What is it?</strong> A text file with instructions on how to build a Docker image.</p>
+      
+      <div class="callout callout-example">
+        <span class="callout-title">Example Dockerfile</span>
+        <pre><code>FROM nginx:alpine
+WORKDIR /usr/share/nginx/html
+COPY . /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]</code></pre>
+      </div>
+
+      <ul>
+        <li><strong>FROM:</strong> Base image.</li>
+        <li><strong>WORKDIR:</strong> Sets the working directory inside container.</li>
+        <li><strong>COPY:</strong> Copies files from host to container.</li>
+        <li><strong>RUN:</strong> Executes commands during the <em>build</em> process.</li>
+        <li><strong>EXPOSE:</strong> Documents the port the container listens on.</li>
+        <li><strong>CMD:</strong> Default command executed when container <em>starts</em>.</li>
+      </ul>
+    </section>
+
+    <!-- SECTION 14 -->
+    <section id="sec-14">
+      <h1>14. Docker Compose</h1>
+      
+      <p><strong>What is it?</strong> A tool for defining and running multi-container Docker applications using a YAML file.</p>
+      <p><strong>Why is it used?</strong> Instead of running 5 long `docker run` commands, you define everything in `docker-compose.yml`.</p>
+
+      <div class="diagram">
+Nginx + Prometheus + Grafana + Loki + Alloy &rarr; defined in docker-compose.yml
+      </div>
+
+      <div class="callout callout-command">
+        <span class="callout-title">Commands</span>
+        <pre><code>docker compose up -d
+docker compose ps
+docker compose logs -f
+docker compose down</code></pre>
+      </div>
+      
+      <p><strong>Interview Point:</strong> Docker Compose automatically creates a default network, allowing services to communicate with each other using their service names as hostnames.</p>
+    </section>
+
+    <!-- SECTION 15 -->
+    <section id="sec-15">
+      <h1>15. Nginx</h1>
+      
+      <p><strong>What is it?</strong> A high-performance web server, reverse proxy, and load balancer.</p>
+      
+      <div class="diagram">
+Browser &rarr; Nginx (Reverse Proxy) &rarr; Internal Application (e.g. Node.js on port 3000)
+      </div>
+
+      <div class="callout callout-example">
+        <span class="callout-title">Basic Configuration</span>
+        <pre><code>server {
+    listen 80;
+    server_name example.com;
+    
+    location / {
+        proxy_pass http://localhost:3000;
+    }
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 16 -->
+    <section id="sec-16">
+      <h1>16. GitHub Actions</h1>
+      
+      <p><strong>What is it?</strong> GitHub's native CI/CD platform.</p>
+      <p><strong>Why is it used?</strong> To automate software workflows (build, test, deploy) triggered by GitHub events.</p>
+      
+      <div class="diagram">
+git push &rarr; GitHub Actions triggers Workflow &rarr; Checkout &rarr; Build &rarr; Test &rarr; Deploy
+      </div>
+
+      <div class="callout callout-key">
+        <span class="callout-title">Key Terms</span>
+        <ul>
+          <li><strong>Workflow:</strong> Defined in <code>.github/workflows/cicd.yml</code>.</li>
+          <li><strong>Job:</strong> A set of steps executing on the same runner.</li>
+          <li><strong>Step:</strong> Individual task (script or action).</li>
+          <li><strong>Runner:</strong> The server that runs your workflow.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SECTION 17 -->
+    <section id="sec-17">
+      <h1>17. Self-hosted GitHub Runner</h1>
+      
+      <p><strong>What is it?</strong> Your own machine/server configured to run GitHub Actions jobs instead of using GitHub's cloud instances.</p>
+      <p><strong>Why is it used?</strong> For accessing private network resources, custom hardware, or saving costs.</p>
+
+      <div class="diagram">
+GitHub &rarr; Workflow Event &rarr; Self-hosted Runner (Your Server) &rarr; Local Docker Executes Job
+      </div>
+
+      <div class="callout callout-interview">
+        <span class="callout-title">Interview Tip</span>
+        A self-hosted runner executes jobs on your infrastructure. Therefore, the runner process can execute local Docker commands directly on that host machine.
+      </div>
+    </section>
+
+    <!-- SECTION 18 -->
+    <section id="sec-18">
+      <h1>18. Prometheus</h1>
+      
+      <p><strong>What is it?</strong> An open-source systems monitoring and alerting toolkit built on a Time-Series Database (TSDB).</p>
+      <p><strong>Why is it used?</strong> To scrape, store, and query metrics (CPU, Memory, HTTP requests).</p>
+
+      <div class="diagram">
+Application Exporter &rarr; Prometheus (Scrapes targets periodically) &rarr; Grafana
+      </div>
+      
+      <div class="callout callout-key">
+        <span class="callout-title">Exporters</span>
+        Small binaries that expose application metrics in a format Prometheus understands (e.g., Node Exporter for Linux stats).
+      </div>
+    </section>
+
+    <!-- SECTION 19 -->
+    <section id="sec-19">
+      <h1>19. Grafana</h1>
+      
+      <p><strong>What is it?</strong> An open-source analytics and interactive visualization web application.</p>
+      <p><strong>Why is it used?</strong> It connects to data sources like Prometheus and Loki to build beautiful dashboards and alerts.</p>
+      
+      <div class="diagram">
+Prometheus (Metrics) &rarr; Grafana
+Loki (Logs) &rarr; Grafana
+      </div>
+
+      <p><strong>Interview Point:</strong> Grafana itself does not collect data. It queries and visualizes data stored in external backends (Data Sources).</p>
+    </section>
+
+    <!-- SECTION 20 -->
+    <section id="sec-20">
+      <h1>20. Loki</h1>
+      
+      <p><strong>What is it?</strong> A horizontally scalable, highly available log aggregation system inspired by Prometheus.</p>
+      <p><strong>Why is it used?</strong> Traditional log systems index full text. Loki only indexes <em>labels</em> for logs, making it extremely lightweight and cost-effective.</p>
+
+      <div class="diagram">
+Container Logs &rarr; Alloy &rarr; Loki &rarr; Grafana
+      </div>
+    </section>
+
+    <!-- SECTION 21 -->
+    <section id="sec-21">
+      <h1>21. Grafana Alloy</h1>
+      
+      <p><strong>What is it?</strong> Grafana's vendor-neutral observability collector (OpenTelemetry native).</p>
+      
+      <p><strong>Why is it used?</strong> It replaces multiple agents (like Promtail). It collects metrics, logs, and traces, and forwards them to backend systems (Prometheus, Loki, Tempo).</p>
+      
+      <div class="diagram">
+Docker Logs/Metrics &rarr; Alloy &rarr; Loki / Prometheus
+      </div>
+      
+      <div class="callout callout-interview">
+        <span class="callout-title">Interview Tip</span>
+        Alloy is primarily a collector agent. It is not just a logging equivalent of Node Exporter; it acts as a universal pipeline for all telemetry data.
+      </div>
+    </section>
+
+    <!-- SECTION 22 -->
+    <section id="sec-22">
+      <h1>22. Monitoring and Alerting</h1>
+      
+      <p><strong>What is it?</strong> Observing system state and reacting to anomalies.</p>
+
+      <ul>
+        <li><strong>Metrics:</strong> Numeric measurements over time (CPU at 90%).</li>
+        <li><strong>Logs:</strong> Discrete event records (User login failed).</li>
+        <li><strong>Alerts:</strong> Notifications sent when thresholds are breached.</li>
+      </ul>
+
+      <div class="diagram">
+Application
+  &rarr; Metrics &rarr; Prometheus &rarr; Grafana
+  &rarr; Logs &rarr; Alloy &rarr; Loki &rarr; Grafana
+  &rarr; Alerts &rarr; Grafana Alerting System (Email, Slack)
+      </div>
+    </section>
+
+    <!-- SECTION 23 -->
+    <section id="sec-23">
+      <h1>23. Terraform</h1>
+      
+      <p><strong>What is it?</strong> An IaC (Infrastructure as Code) tool by HashiCorp.</p>
+      <p><strong>Why is it used?</strong> To provision and manage cloud infrastructure using declarative configuration files (.tf).</p>
+
+      <div class="diagram">
+Terraform &rarr; Cloud Provider API (GCP/AWS) &rarr; Provisioned Infrastructure
+      </div>
+
+      <div class="callout callout-command">
+        <span class="callout-title">Core Commands</span>
+        <code>terraform init</code>: Initialize working directory.<br>
+        <code>terraform fmt</code>: Format code.<br>
+        <code>terraform validate</code>: Check syntax.<br>
+        <code>terraform plan</code>: Show execution plan.<br>
+        <code>terraform apply</code>: Apply changes.<br>
+        <code>terraform destroy</code>: Delete infrastructure.
+      </div>
+      
+      <p><strong>Interview Point:</strong> Terraform uses a <code>terraform.tfstate</code> file to map real-world resources to your configuration. State management is crucial.</p>
+    </section>
+
+    <!-- SECTION 24 -->
+    <section id="sec-24">
+      <h1>24. GCP (Google Cloud Platform)</h1>
+      
+      <p><strong>What is it?</strong> Google's suite of cloud computing services.</p>
+      
+      <ul>
+        <li><strong>Project:</strong> Logical grouping for all resources.</li>
+        <li><strong>VPC:</strong> Virtual Private Cloud (your isolated network).</li>
+        <li><strong>Compute Engine:</strong> Virtual Machines (VMs).</li>
+        <li><strong>IAM:</strong> Identity and Access Management (permissions).</li>
+      </ul>
+
+      <div class="diagram">
+Terraform &rarr; GCP &rarr; VPC &rarr; Compute Engine VM &rarr; Ubuntu OS &rarr; Docker &rarr; Nginx
+      </div>
+    </section>
+
+    <!-- SECTION 25 -->
+    <section id="sec-25">
+      <h1>25. Ubuntu Server</h1>
+      
+      <p><strong>What is it?</strong> A popular Linux distribution for servers.</p>
+
+      <div class="callout callout-command">
+        <span class="callout-title">Administration</span>
+        <pre><code>ssh user@SERVER_IP  # Connect securely
+sudo apt update      # Update package lists
+sudo apt install     # Install software
+df -h                # Check disk space
+free -h              # Check RAM</code></pre>
+      </div>
+
+      <p><strong>SSH Keys:</strong> Instead of passwords, use cryptographic key pairs (public/private). Private key stays with you; public key goes on the server (<code>~/.ssh/authorized_keys</code>).</p>
+    </section>
+
+    <!-- SECTION 26 -->
+    <section id="sec-26">
+      <h1>26. End-to-End Project Architecture</h1>
+      
+      <p>Bringing it all together in a modern DevOps pipeline:</p>
+
+      <div class="diagram">
+Developer &rarr; Git commit &rarr; GitHub
+  &darr;
+GitHub Actions triggers CI/CD
+  &darr;
+Self-Hosted Runner (running on VM)
+  &darr;
+Docker builds and runs the container
+  &darr;
+Nginx serves the HTML Website
+      </div>
+
+      <p><strong>Observability Stack:</strong></p>
+      <ul>
+        <li><strong>Monitoring:</strong> Docker &rarr; Prometheus &rarr; Grafana</li>
+        <li><strong>Logging:</strong> Docker &rarr; Alloy &rarr; Loki &rarr; Grafana</li>
+        <li><strong>Cloud Infrastructure:</strong> Provisioned via Terraform on GCP.</li>
+      </ul>
+    </section>
+
+    <!-- SECTION 27 -->
+    <section id="sec-27">
+      <h1>27. Important Command Cheatsheet</h1>
+      
+      <div class="table-responsive">
+        <table>
+          <tr><th>Category</th><th>Command</th><th>Purpose</th><th>Example</th></tr>
+          <tr><td>Linux</td><td><code>lsblk</code></td><td>List block devices</td><td><code>lsblk</code></td></tr>
+          <tr><td>Linux</td><td><code>chmod</code></td><td>Change permissions</td><td><code>chmod 755 script.sh</code></td></tr>
+          <tr><td>Git</td><td><code>git log</code></td><td>View commit history</td><td><code>git log --oneline</code></td></tr>
+          <tr><td>Git</td><td><code>git remote -v</code></td><td>Show connected remotes</td><td><code>git remote -v</code></td></tr>
+          <tr><td>Docker</td><td><code>docker rmi</code></td><td>Remove image</td><td><code>docker rmi nginx</code></td></tr>
+          <tr><td>Docker</td><td><code>docker inspect</code></td><td>Show container details</td><td><code>docker inspect web</code></td></tr>
+          <tr><td>Compose</td><td><code>docker compose restart</code></td><td>Restart services</td><td><code>docker compose restart</code></td></tr>
+          <tr><td>Network</td><td><code>nslookup</code></td><td>Query DNS</td><td><code>nslookup google.com</code></td></tr>
+          <tr><td>Terraform</td><td><code>terraform apply</code></td><td>Provision infra</td><td><code>terraform apply -auto-approve</code></td></tr>
+          <tr><td>System</td><td><code>systemctl restart</code></td><td>Restart a service</td><td><code>systemctl restart nginx</code></td></tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- SECTION 28 -->
+    <section id="sec-28">
+      <h1>28. Important Ports Cheatsheet</h1>
+      
+      <div class="table-responsive">
+        <table>
+          <tr><th>Port</th><th>Service</th><th>Port</th><th>Service</th></tr>
+          <tr><td><span class="badge">22</span></td><td>SSH</td><td><span class="badge">110</span></td><td>POP3</td></tr>
+          <tr><td><span class="badge">25</span></td><td>SMTP</td><td><span class="badge">143</span></td><td>IMAP</td></tr>
+          <tr><td><span class="badge">53</span></td><td>DNS</td><td><span class="badge">465</span></td><td>SMTPS</td></tr>
+          <tr><td><span class="badge">80</span></td><td>HTTP</td><td><span class="badge">587</span></td><td>SMTP Submission</td></tr>
+          <tr><td><span class="badge">443</span></td><td>HTTPS</td><td><span class="badge">993</span></td><td>IMAPS</td></tr>
+          <tr><td><span class="badge">3000</span></td><td>Grafana</td><td><span class="badge">995</span></td><td>POP3S</td></tr>
+          <tr><td><span class="badge">3306</span></td><td>MySQL</td><td><span class="badge">6379</span></td><td>Redis</td></tr>
+          <tr><td><span class="badge">8080</span></td><td>Web/App Common</td><td><span class="badge">9090</span></td><td>Prometheus</td></tr>
+        </table>
+      </div>
+      
+      <p><strong>Note:</strong> A port identifies the service endpoint on that host, not the machine itself.</p>
+    </section>
+
+    <!-- SECTION 29 -->
+    <section id="sec-29">
+      <h1>29. Networking Quick Reference</h1>
+      
+      <div class="table-responsive">
+        <table>
+          <tr><th>Concept</th><th>Meaning</th><th>Example</th></tr>
+          <tr><td><strong>IP</strong></td><td>Identifies network interface</td><td><code>192.168.1.10</code></td></tr>
+          <tr><td><strong>Private IP</strong></td><td>Internal LAN IP (not routable)</td><td><code>10.0.0.5</code></td></tr>
+          <tr><td><strong>Public IP</strong></td><td>Internet routable IP</td><td><code>8.8.8.8</code></td></tr>
+          <tr><td><strong>localhost</strong></td><td>Loopback hostname</td><td><code>localhost</code></td></tr>
+          <tr><td><strong>127.0.0.1</strong></td><td>Local loopback IP</td><td><code>127.0.0.1</code></td></tr>
+          <tr><td><strong>0.0.0.0</strong></td><td>All IPv4 interfaces on host</td><td><code>0.0.0.0</code></td></tr>
+          <tr><td><strong>Gateway</strong></td><td>Exit node for the network</td><td><code>192.168.1.1</code></td></tr>
+          <tr><td><strong>Subnet</strong></td><td>Logical subdivision of network</td><td><code>192.168.1.0/24</code></td></tr>
+          <tr><td><strong>CIDR</strong></td><td>Method for IP routing</td><td><code>/24</code></td></tr>
+          <tr><td><strong>DNS</strong></td><td>Name to IP translation</td><td><code>example.com</code> &rarr; <code>1.2.3.4</code></td></tr>
+          <tr><td><strong>Port</strong></td><td>Service identifier</td><td><code>80</code>, <code>443</code></td></tr>
+          <tr><td><strong>Socket</strong></td><td>IP + Port</td><td><code>10.0.0.1:8080</code></td></tr>
+          <tr><td><strong>TCP</strong></td><td>Reliable connection protocol</td><td>HTTP, SSH</td></tr>
+          <tr><td><strong>UDP</strong></td><td>Fast, connectionless protocol</td><td>DNS, Video streaming</td></tr>
+          <tr><td><strong>MAC</strong></td><td>Hardware address</td><td><code>00:1A:2B:3C:4D:5E</code></td></tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- SECTION 30 -->
+    <section id="sec-30">
+      <h1>30. Troubleshooting Scenarios</h1>
+      
+      <p>Practical steps when things go wrong.</p>
+
+      <div class="callout callout-example">
+        <span class="callout-title">Scenario: Website not opening (Port 8080)</span>
+        <ol>
+          <li>Is container running? <code>docker ps</code></li>
+          <li>Is port listening? <code>ss -tulpn | grep 8080</code></li>
+          <li>Check container logs: <code>docker logs &lt;container&gt;</code></li>
+          <li>Test locally from server: <code>curl http://localhost:8080</code></li>
+          <li>Check Nginx status: <code>systemctl status nginx</code></li>
+          <li>Check cloud firewall / security groups allowing port 80/8080.</li>
+        </ol>
+      </div>
+
+      <ul>
+        <li><strong>Docker container not starting:</strong> Run <code>docker logs</code> or start it interactively without detached mode (remove <code>-d</code>) to see stdout immediately.</li>
+        <li><strong>Port already in use:</strong> Find PID with <code>ss -tulpn</code> and use <code>kill &lt;PID&gt;</code> if safe.</li>
+        <li><strong>DNS not resolving:</strong> Check <code>nslookup &lt;domain&gt;</code> or edit <code>/etc/hosts</code>.</li>
+        <li><strong>Cannot SSH:</strong> Ensure port 22 is open, SSH service is running, and your private key permissions are secure (<code>chmod 400 key.pem</code>).</li>
+        <li><strong>GitHub Actions failure:</strong> Click the failed step in GitHub UI and read the output logs.</li>
+        <li><strong>Self-hosted runner offline:</strong> SSH into VM, check the <code>run.sh</code> script or <code>journalctl</code> if it runs as a service.</li>
+        <li><strong>Prometheus target down:</strong> Check <code>http://target_ip:9100/metrics</code> via curl. Check firewall rules.</li>
+        <li><strong>Grafana cannot connect to Prometheus:</strong> Ensure Prometheus URL is correct in Data Source settings (e.g., <code>http://prometheus:9090</code> in Docker network).</li>
+        <li><strong>Loki logs not appearing:</strong> Ensure Alloy is running, checking its own logs, and that timestamps are correct on host machines.</li>
+      </ul>
+    </section>
+
+  </main>
+  
+  <script src="script.js"></script>
+</body>
+</html>
