@@ -22,10 +22,17 @@ document.addEventListener('DOMContentLoaded', () => {
   // Mobile Sidebar Toggle
   const menuToggle = document.getElementById('menu-toggle');
   const sidebar = document.getElementById('sidebar');
+  const sidebarOverlay = document.getElementById('sidebar-overlay');
 
-  menuToggle.addEventListener('click', () => {
+  function toggleSidebar() {
     sidebar.classList.toggle('open');
-  });
+    if (sidebarOverlay) sidebarOverlay.classList.toggle('open');
+  }
+
+  menuToggle.addEventListener('click', toggleSidebar);
+  if (sidebarOverlay) {
+    sidebarOverlay.addEventListener('click', toggleSidebar);
+  }
 
   // Close sidebar when clicking a link on mobile
   const navLinksList = document.querySelectorAll('.nav-links a');
@@ -33,6 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
     link.addEventListener('click', () => {
       if (window.innerWidth <= 768) {
         sidebar.classList.remove('open');
+        if (sidebarOverlay) sidebarOverlay.classList.remove('open');
       }
     });
   });

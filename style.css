@@ -79,6 +79,8 @@ body {
 .main-content {
   margin-left: 280px;
   flex: 1;
+  min-width: 0;
+  width: 100%;
   padding: 2rem 4rem;
   max-width: 1100px;
 }
@@ -350,6 +352,32 @@ th {
     margin-left: 0;
     padding: 4rem 1rem 1rem 1rem;
   }
+  
+  h1 { font-size: 1.75rem; }
+  h2 { font-size: 1.5rem; }
+  h3 { font-size: 1.2rem; }
+  
+  .diagram {
+    padding: 1rem;
+    font-size: 0.85rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+    text-align: left;
+  }
+}
+
+/* Sidebar Overlay */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 90;
+  backdrop-filter: blur(2px);
+}
+
+.sidebar-overlay.open {
+  display: block;
 }
 
 /* Diagram blocks */
