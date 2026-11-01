@@ -57,6 +57,7 @@
       <li><a href="#sec-28">28. Ports Cheatsheet</a></li>
       <li><a href="#sec-29">29. Network Reference</a></li>
       <li><a href="#sec-30">30. Troubleshooting</a></li>
+      <li><a href="#sec-31">31. GitHub Runner + Nginx CI/CD Practical</a></li>
     </ul>
   </aside>
 
@@ -366,6 +367,16 @@ host example.com</code></pre>
 Code &rarr; git add &rarr; git commit &rarr; git push &rarr; GitHub
       </div>
 
+      <div class="callout callout-key">
+        <span class="callout-title">Important: Docker Port Publishing</span>
+        <code>-p HOST_PORT:CONTAINER_PORT</code> publishes a container port on the Docker host.
+        For example, <code>-p 8080:80</code> makes a service listening on container port 80 reachable at
+        <code>http://localhost:8080</code> from the host.
+        Port publishing is configured when the container is created. You cannot add a published port to an
+        already-created container; recreate it with the required <code>-p</code> option, preserving any
+        important data and configuration first.
+      </div>
+
       <div class="callout callout-command">
         <span class="callout-title">Important Commands</span>
         <code>git init</code> (initialize repo)<br>
@@ -460,6 +471,17 @@ docker compose down</code></pre>
 Browser &rarr; Nginx (Reverse Proxy) &rarr; Internal Application (e.g. Node.js on port 3000)
       </div>
 
+      <div class="callout callout-key">
+        <span class="callout-title">Static Website Web Root</span>
+        On many Ubuntu/Debian Nginx packages, the default website files are served from
+        <code>/var/www/html/</code>. The default page is commonly <code>index.nginx-debian.html</code>.
+        Confirm the active configuration before assuming the document root:
+        <pre><code>nginx -T | grep -n "root "
+ls -la /var/www/html/</code></pre>
+        A file copied into the web root is deployed, but Nginx must also be running and listening on the
+        expected port before a browser can load it.
+      </div>
+
       <div class="callout callout-example">
         <span class="callout-title">Basic Configuration</span>
         <pre><code>server {
@@ -493,6 +515,25 @@ git push &rarr; GitHub Actions triggers Workflow &rarr; Checkout &rarr; Build &r
           <li><strong>Runner:</strong> The server that runs your workflow.</li>
         </ul>
       </div>
+
+      <div class="callout callout-example">
+        <span class="callout-title">Minimal Workflow Example</span>
+        <pre><code>name: CI
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "Repository checked out"</code></pre>
+        The workflow file is stored in <code>.github/workflows/</code>. The <code>on</code> section
+        defines the trigger, <code>jobs</code> defines work to run, <code>runs-on</code> selects a runner,
+        and <code>steps</code> are executed in order.
+      </div>
     </section>
 
     <!-- SECTION 17 -->
@@ -508,7 +549,7 @@ GitHub &rarr; Workflow Event &rarr; Self-hosted Runner (Your Server) &rarr; Loca
 
       <div class="callout callout-interview">
         <span class="callout-title">Interview Tip</span>
-        A self-hosted runner executes jobs on your infrastructure. Therefore, the runner process can execute local Docker commands directly on that host machine.
+        A self-hosted runner executes jobs in the environment where the runner is installed. It can run Docker commands only when Docker CLI is installed and the runner has permission to access a Docker daemon/socket. A runner inside a basic Ubuntu container does not automatically control Docker Desktop on the host.
       </div>
     </section>
 
@@ -772,11 +813,249 @@ Nginx serves the HTML Website
         <li><strong>DNS not resolving:</strong> Check <code>nslookup &lt;domain&gt;</code> or edit <code>/etc/hosts</code>.</li>
         <li><strong>Cannot SSH:</strong> Ensure port 22 is open, SSH service is running, and your private key permissions are secure (<code>chmod 400 key.pem</code>).</li>
         <li><strong>GitHub Actions failure:</strong> Click the failed step in GitHub UI and read the output logs.</li>
+        <li><strong>Self-hosted runner job stays queued:</strong> Check that the runner is online and every label in <code>runs-on</code> matches a label assigned to that runner.</li>
+        <li><strong>Deployment says file not found:</strong> Check the repository layout and use the correct path after <code>actions/checkout</code>.</li>
+        <li><strong>Deployment succeeds but curl to localhost fails:</strong> The file copy may have succeeded while Nginx is stopped or not listening. Check <code>nginx -t</code>, <code>ps aux | grep nginx</code>, and <code>ss -lntp | grep :80</code>.</li>
+        <li><strong>Website works inside container but not from host:</strong> Check whether the container was created with a port mapping such as <code>-p 8080:80</code>. A container's <code>localhost</code> is not the host computer's <code>localhost</code>.</li>
         <li><strong>Self-hosted runner offline:</strong> SSH into VM, check the <code>run.sh</code> script or <code>journalctl</code> if it runs as a service.</li>
         <li><strong>Prometheus target down:</strong> Check <code>http://target_ip:9100/metrics</code> via curl. Check firewall rules.</li>
         <li><strong>Grafana cannot connect to Prometheus:</strong> Ensure Prometheus URL is correct in Data Source settings (e.g., <code>http://prometheus:9090</code> in Docker network).</li>
         <li><strong>Loki logs not appearing:</strong> Ensure Alloy is running, checking its own logs, and that timestamps are correct on host machines.</li>
       </ul>
+    </section>
+
+
+    <!-- SECTION 31 -->
+    <section id="sec-31">
+      <h1>31. Practical: GitHub Self-hosted Runner + Nginx in One Ubuntu Container</h1>
+
+      <p><strong>Objective:</strong> Run Nginx and a GitHub self-hosted runner inside the same Ubuntu Docker container.
+      When code is pushed to the GitHub repository's <code>main</code> branch, GitHub Actions sends a job to that
+      runner. The runner copies <code>index.html</code> into Nginx's web root.</p>
+
+      <div class="diagram">
+Developer &rarr; git push &rarr; GitHub Repository
+  &rarr; GitHub Actions Workflow
+  &rarr; Self-hosted Runner (inside Ubuntu container)
+  &rarr; Copy index.html to /var/www/html/
+  &rarr; Nginx serves the updated page
+      </div>
+
+      <div class="callout callout-key">
+        <span class="callout-title">Important: One Container Setup</span>
+        In this practical, Ubuntu, the GitHub runner, and Nginx are inside the same Ubuntu container.
+        Docker CLI is not required inside that container for a simple file-copy deployment. Docker Desktop
+        manages the Ubuntu container from the host computer.
+      </div>
+
+      <h3>31.1 Install runner dependencies</h3>
+      <p>Run these commands as root inside the Ubuntu container:</p>
+      <pre><code>apt update
+apt install -y curl git tar gzip libicu-dev</code></pre>
+
+      <div class="table-responsive">
+        <table>
+          <tr><th>Package</th><th>Purpose</th></tr>
+          <tr><td><code>curl</code></td><td>Download the GitHub Actions runner archive.</td></tr>
+          <tr><td><code>git</code></td><td>Check out the repository source code during a workflow.</td></tr>
+          <tr><td><code>tar</code></td><td>Extract the runner archive.</td></tr>
+          <tr><td><code>gzip</code></td><td>Handle the gzip-compressed runner archive.</td></tr>
+          <tr><td><code>libicu-dev</code></td><td>Provides ICU libraries needed by the .NET runtime used by the runner on this setup.</td></tr>
+        </table>
+      </div>
+
+      <div class="callout callout-interview">
+        <span class="callout-title">Dependency Note</span>
+        These are the basic packages used in this practical, not a universal dependency list for every Linux
+        distribution or runner release. If the runner reports missing libraries, run its dependency installer
+        as root: <code>/home/runner/actions-runner/bin/installdependencies.sh</code>.
+        Package names and runtime dependencies can differ between Ubuntu releases.
+      </div>
+
+      <h3>31.2 Create a dedicated runner user</h3>
+      <pre><code>useradd -m -s /bin/bash runner
+mkdir -p /home/runner/actions-runner
+chown -R runner:runner /home/runner</code></pre>
+      <p>Use a non-root account to run workflow jobs. The runner user needs write permission to the Nginx
+      document root for this simple deployment:</p>
+      <pre><code>chown -R runner:runner /var/www/html</code></pre>
+      <p><strong>Note:</strong> Changing ownership is a simple lab setup. For production, prefer a narrowly
+      scoped group or deployment permission rather than making broad ownership changes to web directories.</p>
+
+      <h3>31.3 Download the GitHub runner</h3>
+      <ol>
+        <li>Open the GitHub repository.</li>
+        <li>Go to <strong>Settings &rarr; Actions &rarr; Runners</strong>.</li>
+        <li>Select <strong>New self-hosted runner</strong>, then choose Linux and the correct architecture
+          (usually x64 for <code>x86_64</code>).</li>
+        <li>Use the download URL, version, and checksum displayed by GitHub. Runner versions change, so do not
+          assume an old example URL is current.</li>
+      </ol>
+      <p>As the <code>runner</code> user, create the directory and extract the archive:</p>
+      <pre><code>su - runner
+mkdir -p ~/actions-runner
+cd ~/actions-runner
+
+# Run the exact curl download command shown by GitHub.
+# Then extract the downloaded archive, for example:
+tar xzf actions-runner-linux-x64-*.tar.gz</code></pre>
+
+      <h3>31.4 Configure and start the runner</h3>
+      <p>On the GitHub runner setup page, copy the repository URL and use the temporary registration token
+      shown in the configuration command:</p>
+      <pre><code>./config.sh \
+  --url https://github.com/OWNER/REPOSITORY \
+  --token YOUR_TEMPORARY_REGISTRATION_TOKEN</code></pre>
+      <p>Follow the prompts. The default runner group and default work folder are suitable for this lab.
+      You can optionally add a custom label, but if you do, that label must also appear in the workflow's
+      <code>runs-on</code> list.</p>
+
+      <div class="callout callout-key">
+        <span class="callout-title">Registration Token Security</span>
+        The registration token is temporary and is used to register the runner; it is not a permanent
+        Personal Access Token. Do not publish it, paste it into workflow files, or commit runner credential
+        files such as <code>.credentials</code> and <code>.runner</code> to Git. If a token is exposed,
+        generate a fresh one before registration.
+      </div>
+
+      <p>Start the runner as the <code>runner</code> user:</p>
+      <pre><code>./run.sh</code></pre>
+      <p>Successful startup displays messages similar to:</p>
+      <pre><code>Connected to GitHub
+Listening for Jobs</code></pre>
+      <p>Keep this process running while testing. Closing the terminal or stopping the container stops this
+      foreground runner process. For a long-running environment, configure the runner as a service using
+      GitHub's documented service instructions.</p>
+
+      <h3>31.5 Create the repository files</h3>
+      <p>For this example, <code>index.html</code> is in the repository root:</p>
+      <pre><code>cicddemo/
+├── index.html
+└── .github/
+    └── workflows/
+        └── deploy.yml</code></pre>
+      <p>Example <code>index.html</code>:</p>
+      <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;GitHub Runner Demo&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Hello from GitHub Actions!&lt;/h1&gt;
+  &lt;p&gt;Deployed to Nginx on Ubuntu.&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+      <h3>31.6 Create the workflow</h3>
+      <p>Create <code>.github/workflows/deploy.yml</code>:</p>
+      <pre><code>name: Deploy HTML to Nginx
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, linux, x64]
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Display runner information
+        run: |
+          echo "Running on Ubuntu Docker Container"
+          hostname
+          whoami
+          pwd
+          ls -la
+
+      - name: Deploy HTML
+        run: |
+          cp index.html /var/www/html/index.html
+
+      - name: Verify deployment
+        run: |
+          ls -l /var/www/html/
+          cat /var/www/html/index.html
+          echo "HTML file deployment successful"</code></pre>
+
+      <div class="callout callout-interview">
+        <span class="callout-title">Why these runner labels?</span>
+        The runner automatically receives labels such as <code>self-hosted</code>, <code>linux</code>,
+        and <code>x64</code>. The workflow uses those labels in <code>runs-on</code>. If you add a custom
+        label during runner configuration, include the same label in <code>runs-on</code>; otherwise,
+        GitHub may leave the job waiting for a matching runner.
+      </div>
+
+      <h3>31.7 Understand the deployment steps</h3>
+      <ul>
+        <li><strong>Push trigger:</strong> A push to <code>main</code> starts the workflow.</li>
+        <li><strong>Checkout:</strong> <code>actions/checkout</code> downloads the repository into the runner's job workspace.</li>
+        <li><strong>Deploy:</strong> <code>cp index.html /var/www/html/index.html</code> copies the checked-out file to Nginx's document root.</li>
+        <li><strong>Verify:</strong> <code>ls</code> and <code>cat</code> confirm that the deployed file exists and contains the expected content.</li>
+      </ul>
+
+      <h3>31.8 Push and test</h3>
+      <pre><code>git add .
+git commit -m "Add HTML deployment workflow"
+git push origin main</code></pre>
+      <p>Open the repository's <strong>Actions</strong> tab and inspect the workflow run. A successful
+      <code>Deploy HTML</code> step confirms that the file-copy command completed.</p>
+
+      <h3>31.9 File deployment versus website availability</h3>
+      <div class="callout callout-key">
+        <span class="callout-title">Important Troubleshooting Lesson</span>
+        A file can be copied successfully even when Nginx is stopped. File deployment and HTTP availability
+        are separate checks. A successful <code>cp</code> proves the file was copied; it does not prove that
+        Nginx is running or reachable.
+      </div>
+      <p>Inside the same Ubuntu container, check Nginx:</p>
+      <pre><code>nginx -t
+ps aux | grep nginx
+ss -lntp | grep ':80'
+curl -I http://localhost</code></pre>
+      <p>If Nginx is not running, start it in the container using the appropriate method for that container.
+      In a basic Ubuntu container without systemd, a common foreground command is:</p>
+      <pre><code>nginx -g 'daemon off;'</code></pre>
+      <p>Use a process manager or container entrypoint that keeps the required processes alive if both the
+      runner and Nginx must run continuously in one container.</p>
+
+      <h3>31.10 Access Nginx from the host computer</h3>
+      <p><code>localhost</code> inside the Ubuntu container refers to that container, not the host computer.
+      To open Nginx from the host browser, the Ubuntu container must have been created with a published port,
+      for example <code>-p 8080:80</code>. Then open <code>http://localhost:8080</code> on the host.</p>
+      <pre><code>docker run -it -p 8080:80 ubuntu</code></pre>
+      <p><strong>Important:</strong> Port publishing is set when a container is created. It cannot be added
+      to an existing container in place. Recreate the container with the required port mapping and preserve
+      the runner configuration and website data before removing the old container.</p>
+
+      <h3>31.11 Common errors from this practical</h3>
+      <div class="table-responsive">
+        <table>
+          <tr><th>Error / Symptom</th><th>Reason</th><th>What to check</th></tr>
+          <tr><td>Missing ICU / Dotnet error</td><td>Required ICU runtime library is unavailable.</td><td>Install the appropriate ICU package for the Ubuntu release; run <code>installdependencies.sh</code>.</td></tr>
+          <tr><td><code>Not configured</code></td><td>Runner configuration did not complete.</td><td>Run <code>./config.sh</code> successfully before <code>./run.sh</code>.</td></tr>
+          <tr><td>Job waiting for runner</td><td>No online runner matches all requested labels.</td><td>Compare GitHub runner labels with <code>runs-on</code>.</td></tr>
+          <tr><td><code>cannot stat index.html</code></td><td>The source path does not match the repository layout.</td><td>Inspect files after checkout; use <code>index.html</code> or the correct subdirectory path.</td></tr>
+          <tr><td><code>Permission denied</code></td><td>Runner user cannot write to the Nginx web root.</td><td>Check ownership and write permissions on <code>/var/www/html</code>.</td></tr>
+          <tr><td><code>curl: (7) Failed to connect</code></td><td>Nginx is not listening on the requested address/port.</td><td>Check Nginx process, configuration, and listening socket. The file copy may still have succeeded.</td></tr>
+          <tr><td>Host browser cannot open site</td><td>Container port was not published.</td><td>Recreate with a port mapping such as <code>-p 8080:80</code>, preserving data.</td></tr>
+        </table>
+      </div>
+
+      <div class="callout callout-interview">
+        <span class="callout-title">Security Note</span>
+        Self-hosted runners execute code from workflow files. Use trusted repositories and contributors,
+        restrict who can change workflows, and do not run untrusted pull-request code on a runner that has
+        access to sensitive systems or credentials. A runner inside a container is not automatically a
+        complete security boundary.
+      </div>
     </section>
 
   </main>
